@@ -1,28 +1,28 @@
 import React, {Component} from "react";
 import axios from "axios"
 
-const UserContext = React.createContext();
+const ItemContext = React.createContext();
 //Provider, Consumer
 
 const reducer = (state, action) => {
     
     switch(action.type){
-        case "DELETE_USER":
+        case "DELETE_ITEM":
             return{
                 ...state, //spread operator
-                users : state.users.filter(user => action.payload !== user.id)
+                items : state.items.filter(item => action.payload !== item.id)
                 
             }
 
-        case "ADD_USER":
+        case "ADD_ITEM":
             return {
                 ...state,
-                users : [...state.users, action.payload]
+                items : [...state.items, action.payload]
             }
-        case "UPDATE_USER":
+        case "UPDATE_ITEM":
                 return {
                     ...state,
-                   users : state.users.map(user => user.id === action.payload.id ? action.payload : user)
+                   items : state.items.map(item => item.id === action.payload.id ? action.payload : item)
                 }
         default:
             return state
@@ -30,12 +30,12 @@ const reducer = (state, action) => {
 
 }
 
-export class UserProvider extends Component {
+export class ItemProvider extends Component {
 
 
     state = {
 
-        users : [],
+        items : [],
         dispatch : action => {
             this.setState(state => reducer(state,action))
             //consumer'lardan gelen action, eski state ile değiştirilmek üzere dispatch yardımıyla reducer'a gönderilir.
@@ -48,12 +48,12 @@ export class UserProvider extends Component {
       componentDidMount = async () => {
           //async yaparak ve await diyerek response diyene kadar burada bekledik
 
-       const response = await axios.get("http://localhost:3004/users")
+       const response = await axios.get("http://localhost:3004/items")
        
        this.setState({
-           users : response.data
+           items : response.data
        })
-          
+          console.log(typeof(response.data))
           
       }
       
@@ -61,12 +61,12 @@ export class UserProvider extends Component {
 
     render() {
         return (
-            <UserContext.Provider value = {this.state}>
+            <ItemContext.Provider value = {this.state}>
                 {this.props.children}
-            </UserContext.Provider>
+            </ItemContext.Provider>
         )
     }
 }
 
-const UserConsumer = UserContext.Consumer;
-export default UserConsumer;
+const ItemConsumer = ItemContext.Consumer;
+export default ItemConsumer;

@@ -14,7 +14,7 @@ function Navbar({title}) {
                     <Link to = "/" className = "nav-link">Home</Link>
                 </li>
                 <li className="nav-item active">
-                    <Link to = "/add" className = "nav-link">Add User</Link>
+                    <Link to = "/add" className = "nav-link">Add Item</Link>
                 </li>
                 <li className="nav-item active">
                     <Link to = "/github" className = "nav-link">Project Files</Link>

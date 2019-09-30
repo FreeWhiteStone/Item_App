@@ -1,22 +1,3 @@
 {
-  "users": [
-    {
-      "name": "oss",
-      "salary": "tttgg",
-      "department": "aaaa",
-      "id": 1
-    },
-    {
-      "name": "son adımmm",
-      "salary": "1212",
-      "department": "merkez",
-      "id": 2
-    },
-    {
-      "name": "aa",
-      "salary": "ss",
-      "department": "aa",
-      "id": 3
-    }
-  ]
+  "items": []
 }

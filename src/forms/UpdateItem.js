@@ -1,48 +1,20 @@
 import React, { Component } from 'react'
-import posed from 'react-pose';
-import UserConsumer from "../context"
 import axios from "axios"
+import ItemConsumer from '../context'
 
 
-const Animation = posed.div({
-    visible : {
-        opacity : 1,
-        applyAtStart : {
-            display : "block"
-        }
-    },
-    hidden : {
-        opacity : 0,
-        applyAtEnd : {
-            display : "none"
-        }
-    }
-
-});
-
-class AddUser extends Component {
+class UpdateItem extends Component {
 
     state = {
-        visible : false,
+       
         name : "",
         department : "",
         salary : "",
+        urun_id : "",
         error : false
     }
 
-    changeVisibility = (e) => {
-        this.setState({
-            visible : !this.state.visible
-        })
-    }
-
-    validateForm = () => {
-        const {name, salary, department} = this.state;
-        if(name === "" || salary === "" || department  === ""){
-            return false;
-        }
-        return true;
-    }
+    
 
     changeInput = (e) => {
         
@@ -52,17 +24,47 @@ class AddUser extends Component {
             
         })
     }
-    addUser = async (dispatch, e) => {
+    componentDidMount = async () => {
 
-        e.preventDefault();
-        const {name, department, salary} = this.state;
+        const {id} = this.props.match.params;
+        
 
-        const newUser = {
-            
-            name : name,
-            salary : salary,
-            department : department
+        const response = await axios.get(`http://localhost:3004/items/${id}`);
+        
+        const {name, salary, department, urun_id} = response.data;
+
+        this.setState({
+            name,
+            salary,
+            department,
+            urun_id
+        })
+        
+    }
+
+    validateForm = () => {
+        const {name, salary, department, urun_id} = this.state;
+        if(name === "" || salary === "" || department  === "" || urun_id  === ""){
+            return false;
         }
+        return true;
+    }
+    
+    updateItem = async (dispatch, e) => {
+        e.preventDefault();
+        //Update Item
+
+        const {name, salary, department, urun_id} = this.state;
+        const {id} = this.props.match.params;
+        
+
+        const updatedItem = {
+            name,
+            salary,
+            department,
+            urun_id
+        };
+
 
         if(!this.validateForm()){
             this.setState({
@@ -70,19 +72,22 @@ class AddUser extends Component {
             })
             return;
         }
+      
+        const response = await axios.put(`http://localhost:3004/items/${id}`,updatedItem)
 
-        const response = await axios.post("http://localhost:3004/users", newUser)
-       dispatch({type:"ADD_USER", payload : response.data})
+        dispatch({type : "UPDATE_ITEM", payload : response.data})
 
-       //Redirect
+
+
+         //Redirect
        this.props.history.push("/");
     }
    
 
     render() {
-        const {visible, name, salary,  department, error} = this.state;
+        const {name, salary,  department, urun_id, error} = this.state;
 
-        return (<UserConsumer>
+        return (<ItemConsumer>
 
             {
                 value => {
@@ -92,28 +97,26 @@ class AddUser extends Component {
                     return (
                         <div className="col-md-8 mb-4">
             
-                            <button onClick = {this.changeVisibility} className = "btn btn-dark btn-block mb-2">{visible ? "Hide Form" : "Show Form"}</button>
-                            <Animation pose={this.state.visible ? "visible" : "hidden"}>
+
                             <div className="card">
                                     <div className="card-header">
-                                     <h4>Add User Form</h4>
+                                     <h4>Update Item Form</h4>
                                     </div>
             
                                     <div className="card-body">
 
-                                        {
+                                    {
                                              
-                                                error ?
-                                               <div className = "alert alert-danger">
+                                             error ?
+                                            <div className = "alert alert-danger">
 
-                                                    Lütfen Bilgileri Kontrol ediniz...
+                                                 Lütfen Bilgileri Kontrol ediniz...
 
-                                                </div>
-                                                :null
-                                            
-                                        }
-                                       
-                                        <form onSubmit = {this.addUser.bind(this,dispatch)}>
+                                             </div>
+                                             :null
+                                         
+                                     }
+                                        <form onSubmit = {this.updateItem.bind(this,dispatch)}>
                                             
                                         <div className="form-group">
             
@@ -150,7 +153,7 @@ class AddUser extends Component {
             
                                         <div className="form-group">
             
-                                            <label htmlFor = "salary">Salary</label>
+                                            <label htmlFor = "salary">Price</label>
                                             <input
                                             
                                             type = "text"
@@ -163,22 +166,37 @@ class AddUser extends Component {
                                             />
                                         
                                         </div>
-                                        <button className = "btn btn-danger btn-block" type = "submit">Add User</button>
+                                        <div className="form-group">
+            
+                                            <label htmlFor = "urun_id">ID</label>
+                                            <input
+                                            
+                                            type = "text"
+                                            name = "urun_id"
+                                            id = "urun_id"
+                                            placeholder = "Enter salary"
+                                            className = "form-control"
+                                            value = {urun_id}   
+                                            onChange = {this.changeInput}                             
+                                            />
+                                        
+                                        </div>
+                                        <button className = "btn btn-danger btn-block" type = "submit">Update Item</button>
             
                                         </form>
                                      
                                     </div>
             
                              </div> 
-                             </Animation>
+                            
                         </div>
                     )
 
                 }
             }
-        </UserConsumer>)
+        </ItemConsumer>)
 
         
     }
 }
-export default AddUser;
+export default UpdateItem;

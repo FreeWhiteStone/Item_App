@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import UserConsumer from "../context"
+import ItemConsumer from "../context"
 import axios from "axios"
 import {Link} from "react-router-dom"
 
 
-class User extends Component {
+class Item extends Component {
 
     constructor(props){
 
@@ -22,27 +22,27 @@ class User extends Component {
         });
     }
 
-    onDeleteUser = async (dispatch,e) => {
+    onDeleteItemm = async (dispatch,e) => {
         const {id} = this.props;
 
         //Delete Request
 
-        await axios.delete(`http://localhost:3004/users/${id}`)
+        await axios.delete(`http://localhost:3004/items/${id}`)
 
         //Comsumer Dispatch
     
-        dispatch({type:"DELETE_USER", payload:id})
+        dispatch({type:"DELETE_ITEM", payload:id})
     }
    
     
     render() {
 
         //Destructing
-        const {id, name, department, salary} = this.props;
+        const {id, name, department, salary, urun_id} = this.props;
         const {isVisible} = this.state;
 
         return(
-            <UserConsumer>
+            <ItemConsumer>
                 {
                     value => {
                         const {dispatch} = value;
@@ -52,15 +52,16 @@ class User extends Component {
                               <div className="card" style = {isVisible ? {backgroundColor : "#12999d", color : "white"} : null}>
                                   <div className="card-header d-flex justify-content-between">
                                         <h4 className="d-inline" onClick = {this.onClickEvent}>{name}</h4>
-                                        <i onClick = {this.onDeleteUser.bind(this, dispatch)} className="fas fa-trash-alt" style={{cursor : "pointer"}} ></i>
+                                        <i onClick = {this.onDeleteItemm.bind(this, dispatch)} className="fas fa-trash-alt" style={{cursor : "pointer"}} ></i>
                 
                                   </div>
                 
                                 {
                                     isVisible ? <div className="card-body">
                                     <p className="card-text">Department: {department}</p>
-                                    <p className="card-text">Maaş: {salary}</p>
-                                    <Link to = {`edit/${id}`} className = "btn btn-dark btn-block"> Update User</Link>
+                                    <p className="card-text">Price: {salary}</p>
+                                    <p className="card-text">ID: {urun_id}</p>
+                                    <Link to = {`edit/${id}`} className = "btn btn-dark btn-block"> Update Item</Link>
                                     
                                 </div> : null
                                 }
@@ -72,26 +73,28 @@ class User extends Component {
 
                     }
                 }
-            </UserConsumer>
+            </ItemConsumer>
         )
 
     }
 }
 
-User.propTypes = {
+Item.propTypes = {
 
     name : PropTypes.string.isRequired,
     department : PropTypes.string.isRequired,
     salary : PropTypes.string.isRequired,
-    id : PropTypes.number.isRequired
+    id : PropTypes.number.isRequired,
+    urun_id : PropTypes.string.isRequired,
 
 }
-User.defaultProps = {
+Item.defaultProps = {
 
     name : "def",
     department : "deff",
-    salary : "defff"
+    salary : "defff",
+    urun_id : "aaa"
 
 
 }
-export default User;
+export default Item;
